@@ -6,6 +6,7 @@ using System.Text;
 
 var factory = new ConnectionFactory() { HostName = "localhost" };
 
+var messages = new List<string>();
 
 using (var connection = factory.CreateConnection()) { 
 	using (var channel = connection.CreateModel())
@@ -24,8 +25,11 @@ using (var connection = factory.CreateConnection()) {
 		{
 			var body = ea.Body.ToArray();
 			var message = Encoding.UTF8.GetString(body);
+
+			messages.Add(message);
+
 			var routingKey = ea.RoutingKey;
-			Console.WriteLine(" [x] Received '{0}':'{1}'",
+			Console.WriteLine(" BackOffice [x] Received '{0}':'{1}'",
 							  routingKey,
 							  message);
 		};

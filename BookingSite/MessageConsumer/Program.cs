@@ -14,7 +14,7 @@ using (var connection = factory.CreateConnection())
 
 		channel.QueueBind(queue: queueName,
 						  exchange: "topic_logs",
-						  routingKey: "Tour.Boooking");
+						  routingKey: "Tour.Booking");
 
 		Console.WriteLine(" [*] Waiting for messages. To exit press CTRL+C");
 
@@ -24,7 +24,7 @@ using (var connection = factory.CreateConnection())
 			var body = ea.Body.ToArray();
 			var message = Encoding.UTF8.GetString(body);
 			var routingKey = ea.RoutingKey;
-			Console.WriteLine(" [x] Received '{0}':'{1}'",
+			Console.WriteLine(" Email [x] Received '{0}':'{1}'",
 							  routingKey,
 							  message);
 		};
