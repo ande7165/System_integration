@@ -19,7 +19,10 @@ namespace BookingSite.Controllers
 		[HttpPost]
 		public IActionResult SendMessage(Booking booking)
 		{
-			if(booking != null)
+			if(string.IsNullOrEmpty(booking.Name))
+				return RedirectToAction("Index");
+
+			if (booking != null)
 			{
 				var factory = new ConnectionFactory() { HostName = "localhost" };
 				using (var connection = factory.CreateConnection())
@@ -28,7 +31,10 @@ namespace BookingSite.Controllers
 					channel.ExchangeDeclare(exchange: "topic_logs",
 											type: "topic");
 
-					var routingKey = "Booking.Message";
+					string routingKey = "Tour." + booking.Book;
+
+
+
 					var message = JsonSerializer.Serialize(booking);
 					var body = Encoding.UTF8.GetBytes(message);
 					channel.BasicPublish(exchange: "topic_logs",
