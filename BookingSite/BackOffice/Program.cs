@@ -12,7 +12,15 @@ using (var connection = factory.CreateConnection()) {
 	using (var channel = connection.CreateModel())
 	{
 		channel.ExchangeDeclare(exchange: "topic_logs", type: "topic");
-		var queueName = channel.QueueDeclare().QueueName;
+
+		channel.QueueDeclare(queue: "BackOfficeQueue",
+			arguments: new Dictionary<string, object> //Define arguments for how long the message should sit before being sent to the dlx queue
+			{
+				{"x-dead-letter-exchange", "dlx" },
+				{"x-message-ttl", 1000 }
+			});
+
+		var queueName = "BackOfficeQueue";
 
 			channel.QueueBind(queue: queueName,
 							  exchange: "topic_logs",
@@ -33,9 +41,10 @@ using (var connection = factory.CreateConnection()) {
 							  routingKey,
 							  message);
 		};
-		channel.BasicConsume(queue: queueName,
-							 autoAck: true,
-							 consumer: consumer);
+		//outcommented to test deadletter
+		//channel.BasicConsume(queue: queueName,
+		//					 autoAck: true,
+		//					 consumer: consumer);
 
 		Console.WriteLine(" Press [enter] to exit.");
 		Console.ReadLine();
